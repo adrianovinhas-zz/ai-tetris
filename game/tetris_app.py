@@ -107,7 +107,7 @@ class TetrisApp:
     def quit(self):
         self.__center_msg("Exiting...")
         pygame.display.update()
-        sys.extone
+        sys.exit()
 
     def toggle_pause(self):
         self.paused = not self.paused

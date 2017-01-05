@@ -1,0 +1,8 @@
+# Ignoring .pyc files
+*.pyc
+
+# Pycharm specific folder
+.idea
+
+# DS_Store folder
+.DS_Store
