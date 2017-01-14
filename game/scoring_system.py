@@ -1,17 +1,17 @@
-class ScoringSystem(type):
+from abc import ABCMeta, abstractmethod
+
+
+class ScoringSystem(object):
+    __metaclass__ = ABCMeta
+
     _instance = None
-    points = 0
+    points = None
 
-    def __call__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(ScoringSystem, cls).__call__(*args, **kwargs)
-        return cls._instance
+    def __init__(self, instance):
+        if ScoringSystem._instance is None and points is None:
+            ScoringSystem._instance = instance
+            points = 0
 
-    @abstractmethod
-    def score_lines(cls):
 
     @abstractmethod
-    def score_drop(cls):
-
-class DefaultScoringSystem(ScoringSystem):
-    __metaclass__ = ScoringSystem
+    def score_lines(self): pass

@@ -41,15 +41,24 @@
 
 import pygame
 from board import Board
-from controller import Controller
+from controller import GUIController
 from constants import *
+from scoring_system import DefaultScoringSystem, TestScoringSystem
 import sys
-import inspect
 
 
 class TetrisApp:
     def __init__(self):
         # Screen size and pygame parameter initialization
+        test = DefaultScoringSystem()
+        print test.get_instance()
+        test.points = 2
+        print test.points
+
+        test2 = TestScoringSystem()
+        print test2.get_instance()
+        print test2.points
+
         pygame.init()
         pygame.key.set_repeat(250, 25)
         self.width = cell_size * (cols+6)
@@ -59,7 +68,7 @@ class TetrisApp:
         self.default_font = pygame.font.Font(pygame.font.get_default_font(), 12)
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.event.set_blocked(pygame.MOUSEMOTION)  # We do not need mouse movement events, so we block them.
-        self.controller = Controller(self)
+        self.controller = GUIController(self)
         self.board = Board(self)
         self.__init_game()
 
@@ -142,6 +151,36 @@ class TetrisApp:
 
             dont_burn_my_cpu.tick(maxfps)
 
+    def run_without_gui(self):
+        self.gameover = False
+        while 1:
+            if self.gameover:
+                self.__center_msg("""Game Over!\nYour score: %d. Press space to continue""" % self.score)
+            self.controller.process_events(pygame.event.get())
+
+
+class IllegalArgumentError(ValueError):
+    pass
+
 if __name__ == '__main__':
+
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Tetris game')
+    parser.add_argument('--gui', dest='gui_enabled', action='store_true',
+                        default=True, help='Option to enable/disable GUI')
+    parser.add_argument('--ai', dest='ai_enabled', action='store_false',
+                        default=False, help='Option to enable/disable GUI')
+    parser.add_argument('--store-data', dest='', action='store_false',
+                        default=False, help='Option to enable/disable GUI')
+    args = parser.parse_args()
+
+    if args.gui_enabled is False and args.ai_enabled is False:
+        raise IllegalArgumentError("The GUI is not allowed to be disabled when you're "
+                                   "running your Tetris App without AI")
+
     App = TetrisApp()
-    App.run()
+    if args.gui_enabled is True:
+        App.run()
+    else:
+        App.run_without_gui()

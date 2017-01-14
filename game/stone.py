@@ -9,7 +9,7 @@ class Stone(object):
     """Class that describes a generic Tetris stone played on the board"""
 
     shape = None
-
+#TODO: Create angle attribute
     def __init__(self, copy=None):
         if copy is None:
             self.width = self.__get_width()  # The array is 2D. We grab one of them and take its length

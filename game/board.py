@@ -61,8 +61,6 @@ class Board(object):
         if not self.app.gameover and not self.app.paused:
             next_stone = self.playing_stone.rotate_clockwise()
             if not self.__check_collision(next_stone, (self.playing_stone.x, self.playing_stone.y)):
-                print "test"
-                print next_stone.shape
                 self.playing_stone = next_stone
 
     def __check_collision(self, stone, offset):
