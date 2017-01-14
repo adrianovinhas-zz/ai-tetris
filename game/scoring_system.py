@@ -1,17 +1,25 @@
-from abc import ABCMeta, abstractmethod
+from constants import *
+
+class SingletonType(type):
+    def __call__(cls, *args, **kwargs):
+        try:
+            return cls.__instance
+        except AttributeError:
+            cls.__instance = super(SingletonType, cls).__call__(*args, **kwargs)
+            return cls.__instance
 
 
 class ScoringSystem(object):
-    __metaclass__ = ABCMeta
+    __metaclass__ = SingletonType
 
-    _instance = None
-    points = None
+    def __init__(self):
+        self.points = 0
 
-    def __init__(self, instance):
-        if ScoringSystem._instance is None and points is None:
-            ScoringSystem._instance = instance
-            points = 0
+    def score_lines(self, level, n):
+        self.points += level * linescores[n]
 
+    def add_extra_points(self, extra_points):
+        self.points += extra_points
 
-    @abstractmethod
-    def score_lines(self): pass
+    def reset_score(self):
+        self.points = 0

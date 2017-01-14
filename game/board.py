@@ -40,7 +40,7 @@ class Board(object):
 
     def drop_stone(self, manual):
         if not self.app.gameover and not self.app.paused:
-            self.app.score += 1 if manual else 0
+            self.app.ponctuation.add_extra_points(1) if manual else 0
             self.playing_stone.y += 1
             if self.__check_collision(self.playing_stone, (self.playing_stone.x, self.playing_stone.y)):
                 self.merge_stone(self.playing_stone)
@@ -48,7 +48,7 @@ class Board(object):
                 cleared_rows = map(lambda x: x[1],
                                    filter(lambda x: 0 not in x[0], zip(self.board[:], self.board_ids)))
                 self.remove_row(cleared_rows)
-                self.app.add_cl_lines(len(cleared_rows))
+                self.app.ponctuation.score_lines(self.app.level, len(cleared_rows))
                 return True
         return False
 

@@ -43,24 +43,16 @@ import pygame
 from board import Board
 from controller import GUIController
 from constants import *
-from scoring_system import DefaultScoringSystem, TestScoringSystem
 import sys
+from scoring_system import ScoringSystem
 
 
 class TetrisApp:
     def __init__(self):
         # Screen size and pygame parameter initialization
-        test = DefaultScoringSystem()
-        print test.get_instance()
-        test.points = 2
-        print test.points
-
-        test2 = TestScoringSystem()
-        print test2.get_instance()
-        print test2.points
-
         pygame.init()
         pygame.key.set_repeat(250, 25)
+        self.ponctuation = ScoringSystem()
         self.width = cell_size * (cols+6)
         self.height = cell_size * rows
         self.rlim = cell_size * cols
@@ -75,7 +67,7 @@ class TetrisApp:
     def __init_game(self):
         self.board = Board(self)
         self.level = 1
-        self.score = 0
+        self.ponctuation.reset_score()
         self.lines = 0
         self.gameover = False
         self.paused = False
@@ -106,7 +98,7 @@ class TetrisApp:
 
     def add_cl_lines(self, n): # TO NEW CLASS SCORING SYSTEM
         self.lines += n
-        self.score += linescores[n] * self.level
+        self.ponctuation.score_lines(self.level, n)
         if self.lines >= self.level*6:
             self.level += 1
             newdelay = 1000-50*(self.level-1)
@@ -134,14 +126,14 @@ class TetrisApp:
         while 1:
             self.screen.fill((0, 0, 0))
             if self.gameover:
-                self.__center_msg("""Game Over!\nYour score: %d. Press space to continue""" % self.score)
+                self.__center_msg("""Game Over!\nYour score: %d. Press space to continue""" % self.ponctuation.points)
             else:
                 if self.paused:
                     self.__center_msg("Paused")
                 else:
                     pygame.draw.line(self.screen, (255, 255, 255), (self.rlim+1, 0), (self.rlim+1, self.height-1))
                     self.__disp_msg("Next:", (self.rlim+cell_size, 2))
-                    self.__disp_msg("Score: %d\n\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines), (self.rlim + cell_size, cell_size*5))
+                    self.__disp_msg("Score: %d\n\nLevel: %d\nLines: %d" % (self.ponctuation.points, self.level, self.lines), (self.rlim + cell_size, cell_size*5))
                     self.draw_matrix(self.bground_grid, (0, 0))
                     self.draw_matrix(self.board[:], (0, 0))
                     self.draw_matrix(self.board.playing_stone[:], (self.board.playing_stone.x, self.board.playing_stone.y))
@@ -155,7 +147,7 @@ class TetrisApp:
         self.gameover = False
         while 1:
             if self.gameover:
-                self.__center_msg("""Game Over!\nYour score: %d. Press space to continue""" % self.score)
+                self.__center_msg("""Game Over!\nYour score: %d. Press space to continue""" % self.ponctuation.points)
             self.controller.process_events(pygame.event.get())
 
 
